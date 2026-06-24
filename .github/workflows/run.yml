@@ -13,8 +13,9 @@ concurrency:
 jobs:
   run:
     runs-on: macos-15
-    timeout-minutes: 60
+    timeout-minutes: 75
     env:
+      GH_TOKEN: ${{ github.token }}
       BASE_URL: ${{ secrets.BASE_URL }}
       CFG_A1: ${{ secrets.CFG_A1 }}
       CFG_A2: ${{ secrets.CFG_A2 }}

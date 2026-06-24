@@ -1,2 +1,1 @@
-# CI
-Pipeline only. No source here.
+Internal sync worker. Manual dispatch only.

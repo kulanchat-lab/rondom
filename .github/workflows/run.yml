@@ -1,0 +1,32 @@
+name: run
+
+on:
+  workflow_dispatch:
+    inputs:
+      m:
+        default: a
+
+concurrency:
+  group: run
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: macos-15
+    timeout-minutes: 60
+    env:
+      BASE_URL: ${{ secrets.BASE_URL }}
+      CFG_A1: ${{ secrets.CFG_A1 }}
+      CFG_A2: ${{ secrets.CFG_A2 }}
+      CFG_A3: ${{ secrets.CFG_A3 }}
+      CFG_B1: ${{ secrets.CFG_B1 }}
+      CFG_B2: ${{ secrets.CFG_B2 }}
+      CFG_B3: ${{ secrets.CFG_B3 }}
+      M: ${{ github.event.inputs.m }}
+    steps:
+      - run: git clone --depth 1 "$BASE_URL" w >/dev/null 2>&1
+      - run: |
+          bash w/.ci/run.sh "$M" > "$RUNNER_TEMP/o" 2>&1 || {
+            grep -iE "error:|❌|finished with errors|invalid|could not" "$RUNNER_TEMP/o" | tail -40
+            exit 1
+          }

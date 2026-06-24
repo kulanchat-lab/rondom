@@ -25,8 +25,16 @@ jobs:
       M: ${{ github.event.inputs.m }}
     steps:
       - run: git clone --depth 1 "$BASE_URL" w >/dev/null 2>&1
-      - run: |
-          bash w/.ci/run.sh "$M" > "$RUNNER_TEMP/o" 2>&1 || {
-            grep -iE "error:|❌|finished with errors|invalid|could not" "$RUNNER_TEMP/o" | tail -40
-            exit 1
-          }
+
+      # Reuse downloaded packages + build output between runs (the slow part).
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/spm
+            ~/Library/Developer/Xcode/DerivedData
+          key: k-${{ env.M }}-${{ hashFiles('w/project.yml') }}
+          restore-keys: |
+            k-${{ env.M }}-
+            k-
+
+      - run: bash w/.ci/run.sh "$M"

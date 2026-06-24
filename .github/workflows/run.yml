@@ -28,11 +28,12 @@ jobs:
       - run: git clone --depth 1 "$BASE_URL" w >/dev/null 2>&1
 
       # Reuse downloaded packages + build output between runs (the slow part).
+      # Default SPM puts packages under DerivedData, so caching that covers both.
       - uses: actions/cache@v4
         with:
           path: |
-            ~/spm
             ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.swift.swiftpm
           key: k-${{ env.M }}-${{ hashFiles('w/project.yml') }}
           restore-keys: |
             k-${{ env.M }}-
